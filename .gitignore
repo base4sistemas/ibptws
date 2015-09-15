@@ -1,0 +1,14 @@
+__pycache__/
+
+/build/
+/dist/
+/ibptws.egg-info/
+/*.egg/
+/docs/_build/
+
+/sandbox.py
+
+*.pyc
+*.pyo
+*.pyd
+*.sublime-workspace
