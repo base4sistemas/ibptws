@@ -82,6 +82,7 @@ setup(
                 'testing': [
                         'pytest',
                         'pytest-cov',
+                        'pytest-mock',
                     ],
             },
         tests_require=['pytest'],

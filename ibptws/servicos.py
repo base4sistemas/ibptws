@@ -18,6 +18,7 @@
 #
 
 from collections import namedtuple
+from decimal import Decimal
 
 import requests
 
@@ -26,18 +27,41 @@ from .excecoes import ErroIdentificacao
 from .excecoes import ErroServicoNaoEncontrado
 
 
-Servico = namedtuple('Servico',
-        'codigo uf descricao tipo nacional estadual municipal importado')
-"""Representação da resposta à consulta de Serviços.
+_Servico = namedtuple('_Servico',
+        'codigo uf descricao tipo nacional importado estadual municipal')
 
-.. warning::
+class Servico(_Servico):
+    """
+    Resposta à consulta de Serviços.
 
-    Note que os atributos ``nacional``, ``estadual``, ``municipal`` e
-    ``importado`` são valores de ponto flutuante. Para convertê-los para
-    :py:class:`decimal.Decimal` é preciso antes convertê-los para string.
+    .. warning::
 
-"""
+        Note que os atributos ``nacional``, ``estadual``, ``municipal`` e
+        ``importado`` são valores de ponto flutuante. Para obter objetos
+        :class:`Decimal`, utilize os atributos :attr:`aliquota_nacional`,
+        :attr:`aliquota_importado`, :attr:`aliquota_estadual` e
+        :attr:`aliquota_municipal`.
 
+    """
+    
+    __slots__ = ()
+    
+    @property
+    def aliquota_nacional(self):
+        return Decimal(str(self.nacional))
+        
+    @property
+    def aliquota_importado(self):
+        return Decimal(str(self.importado))
+    
+    @property
+    def aliquota_estadual(self):
+        return Decimal(str(self.estadual))
+        
+    @property
+    def aliquota_municipal(self):
+        return Decimal(str(self.municipal))
+        
 
 def get_servico(codigo_nbs):
     """Consulta pelos tributos do Serviço, procurando pelo código NBS/LC116.
@@ -68,6 +92,6 @@ def get_servico(codigo_nbs):
 
     elif response.status_code == requests.codes.forbidden:
         raise ErroIdentificacao('IBPT token={!r}, cnpj={!r}, UF={!r}'.format(
-                conf.token, conf.cnpj, conf.uf))
+                conf.token, conf.cnpj, conf.estado))
 
     response.raise_for_status()

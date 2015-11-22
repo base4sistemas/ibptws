@@ -20,6 +20,10 @@ IBPT Web Services
 
 -------
 
+.. image:: https://drone.io/github.com/base4sistemas/ibptws/status.png
+    :target: https://drone.io/github.com/base4sistemas/ibptws/latest
+    :alt: Build status
+
 Implementa uma camada fina para acesso aos *web services* do `IBPT`_, para
 auxiliar no cumprimento à `Lei 12.741/2012`_, popularmente conhecida como  "De
 Olho no Imposto". O Instituto Brasileiro de Planejamento e Tributação, IBPT,
@@ -36,7 +40,7 @@ Utilização
 
 Exemplo básico de configuração e consulta de produto:
 
-.. sourcecode:: Python
+.. sourcecode:: python
 
     >>> from ibptws import conf
     >>> from ibptws import get_produto
@@ -50,7 +54,7 @@ Exemplo básico de configuração e consulta de produto:
 
 Similarmente, para consultar um serviço faça:
 
-.. sourcecode:: Python
+.. sourcecode:: python
 
     >>> from ibptws import get_servico
     >>> get_servico('0101')
@@ -60,7 +64,13 @@ Similarmente, para consultar um serviço faça:
 Testes
 ------
 
-Infelizmente, ainda não existem testes implementados. Gostaria de ajudar?
+Os testes são baseados em `pytest`_ e não há acesso real aos serviços do IBPT,
+portanto não há necessidade de configurar o token de acesso para executar os
+testes unitários:
+
+.. sourcecode:: shell
+
+    $ python setup.py test
 
 
 Isenção de Responsabilidade
@@ -75,3 +85,4 @@ biblioteca de código. Utilize por sua conta e risco.
 .. _`NCM`: http://www.mdic.gov.br//sitio/interna/interna.php?area=5&menu=1090
 .. _`NBS`: http://www.mdic.gov.br/sitio/interna/interna.php?area=4&menu=3412
 .. _`Lei 12.741/2012`: http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12741.htm
+.. _`pytest`: http://pytest.org/

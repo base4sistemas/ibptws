@@ -18,6 +18,7 @@
 #
 
 from collections import namedtuple
+from decimal import Decimal
 
 import requests
 
@@ -26,20 +27,39 @@ from .excecoes import ErroIdentificacao
 from .excecoes import ErroProdutoNaoEncontrado
 
 
-Produto = namedtuple('Produto',
-        'codigo uf ex descricao nacional estadual importado')
-"""Representação da resposta à consulta de produtos.
+_Produto = namedtuple('_Produto',
+        'codigo uf ex descricao nacional importado estadual')
 
-.. warning::
 
-    O atributo ``ex`` (exceção à regra aplicada no NCM) não é uma string, mas
-    um número inteiro.
+class Produto(_Produto):
+    """
+    Resposta à consulta de produtos.
 
-    Note também que os atributos ``nacional``, ``estadual`` e ``importado``
-    são valores de ponto flutuante. Para convertê-los para
-    :py:class:`decimal.Decimal` é preciso antes convertê-los para string.
+    .. warning::
 
-"""
+        O atributo ``ex`` (exceção à regra aplicada no NCM) não é uma string,
+        mas um número inteiro.
+
+        Note também que os atributos ``nacional``, ``estadual`` e ``importado``
+        são valores de ponto flutuante. Para obter objetos :class:`Decimal`,
+        utilize os atributos :attr:`aliquota_nacional`,
+        :attr:`aliquota_importado` e :attr:`aliquota_estadual`.
+
+    """
+        
+    __slots__ = ()
+    
+    @property
+    def aliquota_nacional(self):
+        return Decimal(str(self.nacional))
+        
+    @property
+    def aliquota_importado(self):
+        return Decimal(str(self.importado))
+    
+    @property
+    def aliquota_estadual(self):
+        return Decimal(str(self.estadual))
 
 
 def get_produto(codigo_ncm, excecao=0):
@@ -75,6 +95,6 @@ def get_produto(codigo_ncm, excecao=0):
 
     elif response.status_code == requests.codes.forbidden:
         raise ErroIdentificacao('IBPT token={!r}, cnpj={!r}, UF={!r}'.format(
-                conf.token, conf.cnpj, conf.uf))
+                conf.token, conf.cnpj, conf.estado))
 
     response.raise_for_status()

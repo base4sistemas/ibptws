@@ -5,6 +5,7 @@ __pycache__/
 /ibptws.egg-info/
 /*.egg/
 /docs/_build/
+/.cache/
 
 /sandbox.py
 

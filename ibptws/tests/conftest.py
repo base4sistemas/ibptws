@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ibptws/__init__.py
+# ibptws/tests/conftest.py
 #
 # Copyright 2015 Base4 Sistemas Ltda ME
 #
@@ -17,8 +17,25 @@
 # limitations under the License.
 #
 
-__version__ = '0.1'
+import requests
 
-from .config import conf
-from .produtos import get_produto
-from .servicos import get_servico
+
+class ResponseMockup(object):
+    
+    def __init__(self, response_data, status_code):
+        self._response_data = response_data
+        self._status_code = status_code
+    
+    @property
+    def status_code(self):
+        return self._status_code
+        
+    def json(self):
+        return self._response_data
+        
+    def raise_for_status(self):
+        raise requests.HTTPError(str(self.status_code))
+
+
+def pytest_namespace():
+    return {'ResponseMockup': ResponseMockup,}
