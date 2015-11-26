@@ -28,19 +28,9 @@ from ibptws.excecoes import ErroIdentificacao
 from ibptws.produtos import get_produto
 
 
-RESPOSTA_SUCESSO = {
-        'codigo': '12340101',
-        'uf': 'SP',
-        'ex': 0,
-        'descricao': 'Teste simples',
-        'nacional': 0.1,
-        'estadual': 0.2,
-        'importado': 0.3,}
-
-
 def test_consulta_sucesso(monkeypatch):
     def mockreturn(endpoint, params={}):
-        return pytest.ResponseMockup(RESPOSTA_SUCESSO, requests.codes.ok)
+        return pytest.instancia_resp_sucesso_produto
     monkeypatch.setattr(requests, 'get', mockreturn)
     p = get_produto('12340101')
     assert p.codigo == '12340101'

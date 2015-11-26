@@ -19,8 +19,7 @@
 
 from decimal import Decimal
 
-from .produtos import get_produto
-from .servicos import get_servico
+from .provisoes import SemProvisao
 
 
 CEM = Decimal('100')
@@ -48,13 +47,16 @@ class DeOlhoNoImposto(object):
         >>> calculadora.total_tributos()        # doctest: +SKIP
         Decimal('15.20')
         
+    .. versionadded:: 0.3
+        
     """
     
-    def __init__(self):
+    def __init__(self, provisao=None):
         self._fed_nacionais = []
         self._fed_importados = []
         self._estaduais = []
         self._municipais = []
+        self._provisao = provisao or SemProvisao()
         
     
     def reiniciar(self):
@@ -78,7 +80,7 @@ class DeOlhoNoImposto(object):
             comercializada pelo valor unitário de venda.
         
         """
-        p = get_produto(ncm, excecao=ncm_ex)
+        p = self._provisao.get_produto(ncm, ncm_ex)
         self._fed_nacionais.append(valor * (p.aliquota_nacional / CEM))
         self._fed_importados.append(valor * (p.aliquota_importado / CEM))
         self._estaduais.append(valor * (p.aliquota_estadual / CEM))
@@ -93,7 +95,7 @@ class DeOlhoNoImposto(object):
         :param Decimal valor: Valor do subtotal do serviço.
         
         """
-        s = get_servico(nbs)
+        s = self._provisao.get_servico(nbs)
         self._fed_nacionais.append(valor * (s.aliquota_nacional / CEM))
         self._fed_importados.append(valor * (p.aliquota_importado / CEM))
         self._estaduais.append(valor * (p.aliquota_estadual / CEM))

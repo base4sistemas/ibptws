@@ -19,6 +19,33 @@
 
 import requests
 
+#
+# NOTA: Veja https://github.com/jamesls/fakeredis/issues/91
+#       Por essa razão, não utilize sequências fora da faixa ASCII, caso
+#       contrário, 'fakeredis' irá falhar ao converter um comando Redis.
+#
+
+RESPOSTA_SUCESSO_PRODUTO = {
+        'codigo': '12340101',
+        'uf': 'SP',
+        'ex': 0,
+        'descricao': 'Teste simples',
+        'nacional': 0.1,
+        'estadual': 0.2,
+        'importado': 0.3,
+    }
+
+RESPOSTA_SUCESSO_SERVICO = {
+        'codigo': '0123',
+        'uf': 'SP',
+        'descricao': u'Servico Simples', # veja NOTA acima
+        'tipo': 'NBS',
+        'nacional': 0.1,
+        'estadual': 0.2,
+        'municipal': 0.3,
+        'importado': 0.4,
+    }
+
 
 class ResponseMockup(object):
     
@@ -35,7 +62,17 @@ class ResponseMockup(object):
         
     def raise_for_status(self):
         raise requests.HTTPError(str(self.status_code))
-
+        
 
 def pytest_namespace():
-    return {'ResponseMockup': ResponseMockup,}
+    return {
+            'ResponseMockup': ResponseMockup,
+            'RESPOSTA_SUCESSO_PRODUTO': lambda: RESPOSTA_SUCESSO_PRODUTO,
+            'RESPOSTA_SUCESSO_SERVICO': lambda: RESPOSTA_SUCESSO_SERVICO,
+            'instancia_resp_sucesso_produto': ResponseMockup(
+                    RESPOSTA_SUCESSO_PRODUTO,
+                    requests.codes.ok),
+            'instancia_resp_sucesso_servico': ResponseMockup(
+                    RESPOSTA_SUCESSO_SERVICO,
+                    requests.codes.ok),
+        }

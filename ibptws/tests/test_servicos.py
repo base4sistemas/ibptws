@@ -28,20 +28,9 @@ from ibptws.excecoes import ErroIdentificacao
 from ibptws.servicos import get_servico
 
 
-RESPOSTA_SUCESSO = {
-        'codigo': '0123',
-        'uf': 'SP',
-        'descricao': u'Serviço Simples',
-        'tipo': 'NBS',
-        'nacional': 0.1,
-        'estadual': 0.2,
-        'municipal': 0.3,
-        'importado': 0.4,}
-
-
 def test_consulta_sucesso(monkeypatch):
     def mockreturn(endpoint, params={}):
-        return pytest.ResponseMockup(RESPOSTA_SUCESSO, requests.codes.ok)
+        return pytest.instancia_resp_sucesso_servico
     monkeypatch.setattr(requests, 'get', mockreturn)
     p = get_servico('0123')
     assert p.codigo == '0123'
