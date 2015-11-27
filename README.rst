@@ -35,8 +35,8 @@ Para que o acesso aos *web services* seja possível, é preciso cadastrar-se no
 `IBPT`_ para obter seu **token** de acesso.
 
 
-Utilização
-----------
+Configuração e Consultas Básicas
+--------------------------------
 
 Exemplo básico de configuração e consulta de produto:
 
@@ -59,6 +59,66 @@ Similarmente, para consultar um serviço faça:
     >>> from ibptws import get_servico
     >>> get_servico('0101')
     Servico(codigo=u'101', uf=u'SP', descricao=u'An\xe1lise e desenvolvimento de sistemas.', tipo=u'NBS', nacional=13.45, estadual=0.0, municipal=3.9, importado=15.45)
+
+
+Calculadora ``DeOlhoNoImposto``
+-------------------------------
+
+A calculadora **De Olho no Imposto** auxilia na computação dos valores
+aproximados dos tributos, tornando trivial a consulta por **n** produtos e/ou
+servicos e a obtenção dos cálculos parciais e totais dos tributos.
+
+.. sourcecode:: python
+
+    >>> from decimal import Decimal
+    >>> from ibptws.calculadoras import DeOlhoNoImposto
+    
+    >>> calc = DeOlhoNoImposto()
+    >>> calc.produto('02091021', 0, Decimal('5.75'))
+    >>> calc.servico('0101', Decimal('73.47'))
+
+    >>> calc.carga_federal_nacional()
+    Decimal('10.123215')
+
+    >>> calc.carga_federal_importado()
+    Decimal('11.718540')
+
+    >>> calc.carga_estadual()
+    Decimal('0.6900')
+
+    >>> calc.carga_municipal()
+    Decimal('2.86533')
+
+    >>> calc.total_tributos()
+    Decimal('25.397085')
+
+    >>> calc.total()
+    Decimal('79.22')
+
+    >>> calc.percentual_sobre_total()
+    Decimal('0.3205893082554910376167634436')
+
+
+Provisionamento de Dados
+------------------------
+
+A calculadora **De Olho no Imposto** recorre a um *proxy* para realizar as
+consultas de produtos e serviços, possibilitando que seja implementada uma
+camada para provisionamento (*cache*) das consultas realizadas. Este projeto
+traz uma implementação de provisionamento baseada em `Redis`_:
+
+.. sourcecode:: python
+
+    from ibptws.calculadoras import DeOlhoNoImposto
+    from ibptws.provisoes import ProvisaoViaRedis
+    
+    calc = DeOlhoNoImposto(provisao=ProvisaoViaRedis(
+            host='192.168.0.111', port=6379, db=0))
+    
+Neste exemplo, as consultas a produtos e serviços serão realizadas através
+do *proxy* e, uma vez acessado o web services do IBPT, os dados ficarão
+provisionados até que expire (o padrão é expirar em 24h, mas você poderá usar
+os seus próprios critérios).
 
 
 Testes
@@ -86,3 +146,4 @@ biblioteca de código. Utilize por sua conta e risco.
 .. _`NBS`: http://www.mdic.gov.br/sitio/interna/interna.php?area=4&menu=3412
 .. _`Lei 12.741/2012`: http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12741.htm
 .. _`pytest`: http://pytest.org/
+.. _`Redis`: http://redis.io/
