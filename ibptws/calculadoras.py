@@ -22,6 +22,7 @@ from decimal import Decimal
 from .provisoes import SemProvisao
 
 
+ZERO = Decimal('0')
 CEM = Decimal('100')
 
 
@@ -56,6 +57,7 @@ class DeOlhoNoImposto(object):
         self._fed_importados = []
         self._estaduais = []
         self._municipais = []
+        self._total = ZERO
         self._provisao = provisao or SemProvisao()
         
     
@@ -67,6 +69,7 @@ class DeOlhoNoImposto(object):
         self._fed_importados[:] = []
         self._estaduais[:] = []
         self._municipais[:] = []
+        self._total = ZERO
         
         
     def produto(self, ncm, ncm_ex, valor):
@@ -84,6 +87,7 @@ class DeOlhoNoImposto(object):
         self._fed_nacionais.append(valor * (p.aliquota_nacional / CEM))
         self._fed_importados.append(valor * (p.aliquota_importado / CEM))
         self._estaduais.append(valor * (p.aliquota_estadual / CEM))
+        self._total += valor
         
     
     def servico(self, nbs, valor):
@@ -97,9 +101,10 @@ class DeOlhoNoImposto(object):
         """
         s = self._provisao.get_servico(nbs)
         self._fed_nacionais.append(valor * (s.aliquota_nacional / CEM))
-        self._fed_importados.append(valor * (p.aliquota_importado / CEM))
-        self._estaduais.append(valor * (p.aliquota_estadual / CEM))
-        self._municipais.append(valor * (p.aliquota_municipal / CEM))
+        self._fed_importados.append(valor * (s.aliquota_importado / CEM))
+        self._estaduais.append(valor * (s.aliquota_estadual / CEM))
+        self._municipais.append(valor * (s.aliquota_municipal / CEM))
+        self._total += valor
         
         
     def carga_federal(self):
@@ -119,7 +124,7 @@ class DeOlhoNoImposto(object):
         
         :rtype: decimal.Decimal
         """
-        return sum(self._fed_nacionais)
+        return sum(self._fed_nacionais or [ZERO,])
         
     
     def carga_federal_importado(self):
@@ -129,7 +134,7 @@ class DeOlhoNoImposto(object):
         
         :rtype: decimal.Decimal
         """
-        return sum(self._fed_importados)
+        return sum(self._fed_importados or [ZERO,])
         
     
     def carga_estadual(self):
@@ -137,7 +142,7 @@ class DeOlhoNoImposto(object):
         Retorna o valor aproximado dos tributos na esfera estadual.
         :rtype: decimal.Decimal
         """
-        return sum(self._estaduais)
+        return sum(self._estaduais or [ZERO,])
         
     
     def carga_municipal(self):
@@ -145,7 +150,7 @@ class DeOlhoNoImposto(object):
         Retorna o valor aproximado dos tributos na esfera municipal.
         :rtype: decimal.Decimal
         """
-        return sum(self._municipais)
+        return sum(self._municipais or [ZERO,])
         
     
     def total_tributos(self):
@@ -159,4 +164,22 @@ class DeOlhoNoImposto(object):
                 self.carga_federal(),
                 self.carga_estadual(),
                 self.carga_municipal(),])
+                
     
+    def total(self):
+        """
+        Retorna a soma dos subtotais dos produtos e servicos calculados.
+        :rtype: decimal.Decimal
+        """
+        return self._total
+        
+    
+    def percentual_sobre_total(self):
+        """
+        Retorna o percentual que o total dos tributos representa sobre o
+        valor total dos produtos e serviços calculados.
+        :rtype: decimal.Decimal
+        """
+        if self.total().is_zero():
+            return ZERO
+        return self.total_tributos() / self.total()

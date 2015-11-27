@@ -29,10 +29,30 @@ RESPOSTA_SUCESSO_PRODUTO = {
         'codigo': '12340101',
         'uf': 'SP',
         'ex': 0,
-        'descricao': 'Teste simples',
-        'nacional': 0.1,
-        'estadual': 0.2,
-        'importado': 0.3,
+        'descricao': 'Produto Simples',
+        'nacional': 4.2,
+        'importado': 4.8,
+        'estadual': 18.0,
+    }
+
+RESPOSTA_SUCESSO_PRODUTO_ALT_A = {
+        'codigo': '12340202',
+        'uf': 'SP',
+        'ex': 0,
+        'descricao': 'Produto Simples Alternativo (A)',
+        'nacional': 4.2,
+        'importado': 5.41,
+        'estadual': 0.0,
+    }
+    
+RESPOSTA_SUCESSO_PRODUTO_ALT_B = {
+        'codigo': '12340303',
+        'uf': 'SP',
+        'ex': 0,
+        'descricao': 'Produto Simples Alternativo (B)',
+        'nacional': 4.2,
+        'importado': 6.18,
+        'estadual': 12.0,
     }
 
 RESPOSTA_SUCESSO_SERVICO = {
@@ -40,10 +60,21 @@ RESPOSTA_SUCESSO_SERVICO = {
         'uf': 'SP',
         'descricao': u'Servico Simples', # veja NOTA acima
         'tipo': 'NBS',
-        'nacional': 0.1,
-        'estadual': 0.2,
-        'municipal': 0.3,
-        'importado': 0.4,
+        'nacional': 13.45,
+        'importado': 14.05,
+        'estadual': 0,
+        'municipal': 4.33,
+    }
+    
+RESPOSTA_SUCESSO_SERVICO_ALT_A = {
+        'codigo': '0124',
+        'uf': 'SP',
+        'descricao': u'Servico Simples Alternativo (A)', # veja NOTA acima
+        'tipo': 'NBS',
+        'nacional': 13.45,
+        'importado': 14.05,
+        'estadual': 0,
+        'municipal': 3.55,
     }
 
 
@@ -72,7 +103,16 @@ def pytest_namespace():
             'instancia_resp_sucesso_produto': ResponseMockup(
                     RESPOSTA_SUCESSO_PRODUTO,
                     requests.codes.ok),
+            'instancia_resp_sucesso_produto_alt_a': ResponseMockup(
+                    RESPOSTA_SUCESSO_PRODUTO_ALT_A,
+                    requests.codes.ok),
+            'instancia_resp_sucesso_produto_alt_b': ResponseMockup(
+                    RESPOSTA_SUCESSO_PRODUTO_ALT_B,
+                    requests.codes.ok),
             'instancia_resp_sucesso_servico': ResponseMockup(
                     RESPOSTA_SUCESSO_SERVICO,
+                    requests.codes.ok),
+            'instancia_resp_sucesso_servico_alt_a': ResponseMockup(
+                    RESPOSTA_SUCESSO_SERVICO_ALT_A,
                     requests.codes.ok),
         }
