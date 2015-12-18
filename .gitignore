@@ -6,6 +6,7 @@ __pycache__/
 /*.egg/
 /docs/_build/
 /.cache/
+/.eggs/
 
 /sandbox.py
 
