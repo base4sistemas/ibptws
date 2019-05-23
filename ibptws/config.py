@@ -21,10 +21,10 @@ class Endpoint(object):
 
     def __init__(self):
 
-        self.produtos = 'http://iws.ibpt.org.br/api/Produtos'
+        self.produtos = 'https://apidoni.ibpt.org.br/api/v1/produtos'
         """Endereço para o web services de produtos."""
 
-        self.servicos = 'http://iws.ibpt.org.br/api/Servicos'
+        self.servicos = 'https://apidoni.ibpt.org.br/api/v1/servicos'
         """Endereço para o web services de serviços."""
 
 

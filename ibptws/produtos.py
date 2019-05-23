@@ -27,8 +27,10 @@ from .excecoes import ErroIdentificacao
 from .excecoes import ErroProdutoNaoEncontrado
 
 
-_Produto = namedtuple('_Produto',
-        'codigo uf ex descricao nacional importado estadual')
+_Produto = namedtuple(
+    '_Produto',
+    'codigo uf ex descricao nacional importado estadual'
+)
 
 
 class Produto(_Produto):
@@ -81,13 +83,16 @@ def get_produto(codigo_ncm, excecao=0):
         expirado ou não estiverem corretos.
     """
 
-    response = requests.get(conf.endpoint.produtos, params=dict(
-            token=conf.token, cnpj=conf.cnpj, uf=conf.estado,
-            codigo=codigo_ncm, ex=excecao))
+    response = requests.get(conf.endpoint.produtos,
+                            params=dict(
+                                token=conf.token, cnpj=conf.cnpj, uf=conf.estado,
+                                codigo=codigo_ncm, ex=excecao, descricao='',
+                                unidadeMedida='', valor=0,
+                                gtin=''))
 
     if response.status_code == requests.codes.ok:
         data = response.json()
-        return Produto(**{k.lower():v for k,v in data.items()})
+        return Produto(**{k.lower(): v for k, v in data.items() if hasattr(Produto, k.lower())})
 
     elif response.status_code == requests.codes.not_found:
         raise ErroProdutoNaoEncontrado('NCM={!r}, EX={!r}'.format(

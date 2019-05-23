@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-__version__ = '0.4'
+__version__ = '0.5'
 
 from .config import conf
 from .produtos import get_produto
